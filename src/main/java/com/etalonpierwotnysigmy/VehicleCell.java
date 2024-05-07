@@ -4,6 +4,9 @@ abstract class VehicleCell extends Cell{
     protected Position direction;
     protected int speed;
 
+    public VehicleCell(Position direction) {
+        this.direction = direction;
+    }
     @Override
     Position update(Position position, Cell[][] grid, int step) {
         if (step % speed == 0) {
@@ -12,4 +15,15 @@ abstract class VehicleCell extends Cell{
         }
         return position;
     }
+
+    public boolean hasPriority(Position position, Cell[][] grid) {
+        // implementacja logiki pierwszeństwa
+        return true;
+    }
+
+    public Position getDirection() {
+        return direction;
+    }
+
+
 }

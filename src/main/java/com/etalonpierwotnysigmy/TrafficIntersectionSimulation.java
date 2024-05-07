@@ -22,34 +22,52 @@ public class TrafficIntersectionSimulation {
         initializeGrid();
     }
 
-    public void initializeGrid() {
+    public void initializeGrid() { // inicjalizacja mapy
         for (int i = grid.length / 2 - 1; i <= grid.length / 2; i++) {
-            for (int j = 0 / 2; j < grid.length; j++) {
-                chooseCellType(i, j);
+            for (int j = 0; j < grid.length / 2 - 1; j++) {
+                spawnCell(i, j);
+            }
+        }
+        for (int i = grid.length / 2 - 1; i <= grid.length / 2; i++) {
+            for (int j = grid.length / 2  + 1; j < grid.length; j++) {
+                spawnCell(i, j);
             }
         }
         for (int i = 0; i <= grid.length / 2 - 2; i++) {
             for (int j = grid.length / 2 - 1; j <= grid.length / 2 ; j++) {
-                chooseCellType(i, j);
+                spawnCell(i, j);
             }
         }
         for (int i = grid.length / 2 + 1; i < grid.length; i++) {
             for (int j = grid.length / 2 - 1; j <= grid.length / 2 ; j++) {
-                chooseCellType(i, j);
+                spawnCell(i, j);
             }
         }
 
     }
 
-    private void chooseCellType(int i, int j) {
+    private Position chooseDirection(int i, int j) { // wybór kierunku
+        if (i == grid.length / 2 - 1 && j >= grid.length / 2) return Direction.LEFT;
+        else if (i == grid.length / 2 && j >= grid.length / 2) return Direction.RIGHT;
+        else if (i == grid.length / 2 - 1 && j <= grid.length / 2) return Direction.LEFT;
+        else if (i == grid.length / 2 && j <= grid.length / 2) return Direction.RIGHT;
+        else if (i <= grid.length / 2 && j == grid.length / 2 - 1) return Direction.DOWN;
+        else if (i <= grid.length / 2 && j == grid.length / 2) return Direction.UP;
+        else if (i >= grid.length / 2 && j == grid.length / 2 - 1) return Direction.DOWN;
+        else return Direction.UP;
+    }
+
+    private void spawnCell(int i, int j) {
         double randomProbability = Math.random();
         double carProbability = (double)carWeight / totalWeight;
         double truckProbability = (double)truckWeight / totalWeight;
         double bikeProbability = (double)bikeWeight / totalWeight;
 
-        if (randomProbability < carProbability) grid[i][j] = new CarCell();
-        else if (randomProbability < carProbability + truckProbability) grid[i][j] = new TruckCell();
-        else if (randomProbability < carProbability + truckProbability + bikeProbability) grid[i][j] = new BikeCell();
+        Position direction = chooseDirection(i, j); // inicjalizacja kierunku
+
+        if (randomProbability < carProbability) grid[i][j] = new CarCell(direction); // wybór typu komórki w zależności od prawdopodobieństw
+        else if (randomProbability < carProbability + truckProbability) grid[i][j] = new TruckCell(direction);
+        else if (randomProbability < carProbability + truckProbability + bikeProbability) grid[i][j] = new BikeCell(direction);
     }
 
     public void updateGrid() {
@@ -60,6 +78,7 @@ public class TrafficIntersectionSimulation {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid.length; j++) {
                 System.out.print(grid[i][j] + " ");
+                if (grid[i][j] instanceof VehicleCell) System.out.print(((VehicleCell) grid[i][j]).getDirection().toString());
             }
             System.out.println();
         }
